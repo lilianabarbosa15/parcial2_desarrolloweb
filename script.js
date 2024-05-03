@@ -1,4 +1,5 @@
 const apiUrl = 'https://pokeapi.co/api/v2/pokemon/'; //URL de la API
+let nombreEvolucion = '';
 
 async function consultarApi(url){
     /*
@@ -8,30 +9,54 @@ async function consultarApi(url){
     */
     try{
         const response = await axios.get(url);
-        /*Se pueden hacer validaciones para evitar errores y hacer validacion de estatus*/
         return response.data;
     }catch(error){
         console.error(`fallo en la consulta a la api: ${error}`);
         "Se muestra el error y se oculta la información"
-        /*
-        const contError = document.querySelector('.error');
-        const contWeather = document.querySelector('.weather');
-        contError.style.display = 'inline-block';
-        contWeather.style.display = 'none';*/
+        updateWindow(false);
     }
+}
+
+/*Actualiza la pantalla*/
+function updateWindow(state, name){
+    /*
+    Recibe una variable booleana donde si es true se actualiza con la
+    información nueva del servidor mientras que si es false muestra en
+    pantalla que los datos no pudieron ser cargados.
+    */
+    //Se limpia la pantalla de algún error anterior:
+    const contError = document.querySelector('.containerError');
+    const contDish = document.querySelector('.containerInfo');
+    const contEvolucion = document.querySelector(".containerEvolution");
+    if (state){
+        contError.style.display = 'none';
+        contDish.style.display = 'inline-block';
+        if(name==""){
+            console.log("no evoluciona")
+            contEvolucion.style.display='none';
+        }else{
+            console.log(name);
+            contEvolucion.style.display='inline-block';
+        }
+    }else{   //hubo error
+        contError.style.display = 'inline-block';
+        contDish.style.display = 'none';
+    }
+   
 }
 
 /*Verificación de pokemon ingresado*/
 async function verifPokemon(url,input){
     /*
     Función asincrona que recibe la base de datos general y revisa si el pokemon ingresado
-    se encuentra allí. Entrega true si sí, false si no
+    se encuentra allí.
     */
     const datos = await consultarApi(url+input);
+    console.log(datos);
     if(datos===undefined){
-        return false;
+        updateWindow(false, "");
     }else{
-        return true;
+        obtenerDatos(url+input);
     }
 }
 
@@ -98,14 +123,7 @@ async function obtenerDatos(url){
     const newHabilidad = document.querySelector(".pokemonAbilities");
     newHabilidad.innerHTML=HabilidadesStr;
     "Se muestra el botón evolucionar si así es el caso"
-    if(evolucionarPokemon(datos.species.url, Nombre) === ""){
-        console.log("no hay evolucion!")
-    }
-    "Se muestra la información cuando está bien todo"
-    /*const contError = document.querySelector('.error');
-    const contWeather = document.querySelector('.weather');
-    contError.style.display = 'none';
-    contWeather.style.display = 'block';*/
+    evolucionarPokemon(datos.species.url, Nombre);
 }
 
 async function evolucionarPokemon(url, name){
@@ -153,15 +171,10 @@ async function evolucionarPokemon(url, name){
         }
     }
    }
-   return nombreEvol;
+   nombreEvolucion = nombreEvol;
+   "Se muestra la información"
+   updateWindow(true, nombreEvol);
 }
-
-
-
-
-
-
-
 
 
 
@@ -171,16 +184,17 @@ async function evolucionarPokemon(url, name){
 /*Captura datos*/
 const searchButton = document.querySelector('.buttonSearch');
 const searchInput = document.querySelector('#in1');
-
 searchButton.addEventListener( /*Se agrega CallBack, función que se ejecuta en el momento del evento*/
     "click", () => { /*Función anonima para obtener datos del plato*/
-        //Se limpia la pantalla de algún error anterior:
-        //updateWindow(true);
-        //Se lee el valor ingresado por el usuario y se verifica levemente:
         let inputData = String(searchInput.value);
-        if(verifPokemon(url,input)==true){
-            
-        }
+        verifPokemon(apiUrl,inputData)
+    }
+)
+
+const evolButton = document.querySelector('.buttonEvolution');
+evolButton.addEventListener( /*Se agrega CallBack, función que se ejecuta en el momento del evento*/
+    "click", () => { /*Función anonima para obtener datos del plato*/
+        obtenerDatos(apiUrl+nombreEvolucion);
     }
 )
 
