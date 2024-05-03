@@ -13,7 +13,7 @@ async function consultarApi(url){
     }catch(error){
         console.error(`fallo en la consulta a la api: ${error}`);
         "Se muestra el error y se oculta la información"
-        updateWindow(false);
+        updateWindow(false,"");
     }
 }
 
@@ -41,6 +41,8 @@ function updateWindow(state, name){
     }else{   //hubo error
         contError.style.display = 'inline-block';
         contDish.style.display = 'none';
+        nombreEvolucion = '';
+        contEvolucion.style.display='none';
     }
    
 }
@@ -197,11 +199,3 @@ evolButton.addEventListener( /*Se agrega CallBack, función que se ejecuta en el
         obtenerDatos(apiUrl+nombreEvolucion);
     }
 )
-
-
-
-
-
-
-
-
