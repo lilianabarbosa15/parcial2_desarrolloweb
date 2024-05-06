@@ -73,7 +73,7 @@ async function obtenerDatos(url){
     //Nombre:
     const Nombre = datos.species.name;
     //Foto:
-    let Foto = datos.sprites.front_default; //.other.official-artwork.front_default;
+    let Foto = datos.sprites.other["official-artwork"].front_default; //.other.official-artwork.front_default;
     console.log(Foto)
     //Tipo: 
     const Tipo = new Array();
